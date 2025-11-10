@@ -173,7 +173,10 @@ class SpaceRift {
         // Инициализация THREE.js
         await this.game.init();
         
-        console.log('✅ Игровой движок инициализирован');
+        // Запуск игрового цикла
+        this.game.start();
+        
+        console.log('✅ Игровой движок инициализирован и запущен');
     }
     
     initUI() {

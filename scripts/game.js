@@ -32,30 +32,41 @@ class GameEngine {
         try {
             // Создание сцены
             this.initScene();
+            console.log('📐 Сцена создана, объектов:', this.scene.children.length);
             
             // Создание камеры
             this.initCamera();
+            console.log('📷 Камера создана, позиция:', this.camera.position);
             
             // Создание рендерера
             this.initRenderer();
+            console.log('🎨 Рендерер создан');
             
             // Создание освещения
             this.initLighting();
+            console.log('💡 Освещение создано, объектов в сцене:', this.scene.children.length);
             
             // Создание игрока
             this.initPlayer();
+            console.log('🚀 Игрок создан, объектов в сцене:', this.scene.children.length);
             
             // Создание звездного поля
             this.createStarField();
+            console.log('⭐ Звездное поле создано, объектов в сцене:', this.scene.children.length);
+            
+            // Создание тестового объекта для отладки
+            this.createTestObject();
+            console.log('🧪 Тестовый объект создан, объектов в сцене:', this.scene.children.length);
             
             // Создание астероидов
             this.createAsteroids();
+            console.log('🪨 Астероиды созданы, объектов в сцене:', this.scene.children.length);
             
             // Настройка рендеринга
             this.setupRendering();
             
             this.isInitialized = true;
-            console.log('✅ Игровой движок готов');
+            console.log('✅ Игровой движок готов. Всего объектов в сцене:', this.scene.children.length);
             
         } catch (error) {
             console.error('❌ Ошибка инициализации игрового движка:', error);
@@ -80,12 +91,10 @@ class GameEngine {
         const aspect = canvas.clientWidth / canvas.clientHeight;
         
         this.camera = new THREE.PerspectiveCamera(75, aspect, 0.1, 10000);
-        this.camera.position.set(0, 0, 10);
-        
-        // Настройка для вид от первого лица
+        this.camera.position.set(0, 5, 30); // Камера выше и дальше
         this.camera.lookAt(0, 0, 0);
         
-        console.log('✓ Камера создана');
+        console.log('✓ Камера создана (позиция: 0, 5, 30)');
     }
     
     initRenderer() {
@@ -241,6 +250,21 @@ class GameEngine {
         }
         
         console.log('✓ Астероиды созданы');
+    }
+    
+    // Создание тестового объекта для отладки
+    createTestObject() {
+        const testGeometry = new THREE.BoxGeometry(2, 2, 2);
+        const testMaterial = new THREE.MeshBasicMaterial({ 
+            color: 0xff0000,
+            wireframe: true
+        });
+        
+        const testObject = new THREE.Mesh(testGeometry, testMaterial);
+        testObject.position.set(0, 0, -20); // Впереди игрока
+        
+        this.scene.add(testObject);
+        console.log('✓ Тестовый объект создан (красный куб)');
     }
     
     createAsteroid() {
@@ -661,6 +685,46 @@ class GameEngine {
     render() {
         if (this.isInitialized && this.renderer && this.scene && this.camera) {
             this.renderer.render(this.scene, this.camera);
+        } else {
+            console.warn('⚠️ Рендеринг пропущен:', {
+                isInitialized: this.isInitialized,
+                hasRenderer: !!this.renderer,
+                hasScene: !!this.scene,
+                hasCamera: !!this.camera
+            });
+        }
+    }
+    
+    // Запуск игрового цикла
+    start() {
+        if (this.isInitialized) {
+            console.log('🚀 Запуск игрового цикла...');
+            this.gameLoop();
+        } else {
+            console.error('❌ GameEngine не инициализирован');
+        }
+    }
+    
+    // Основной игровой цикл
+    gameLoop() {
+        // Время
+        const currentTime = performance.now();
+        this.elapsedTime = (currentTime - this.lastTime) / 1000; // в секундах
+        this.lastTime = currentTime;
+        
+        try {
+            // Обновление логики
+            this.update();
+            
+            // Рендеринг
+            this.render();
+            
+            // Следующий кадр
+            requestAnimationFrame(() => this.gameLoop());
+        } catch (error) {
+            console.error('❌ Ошибка в игровом цикле:', error);
+            // Попытка продолжить через секунду
+            setTimeout(() => this.gameLoop(), 1000);
         }
     }
 }
