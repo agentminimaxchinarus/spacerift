@@ -81,7 +81,6 @@ class SpaceRift {
             
         } catch (error) {
             console.error('❌ Ошибка инициализации SpaceRift:', error);
-<<<<<<< HEAD
             
             // Скрыть загрузочный экран
             const loadingScreen = document.getElementById('loading-screen');
@@ -434,9 +433,7 @@ class SpaceRift {
     }
     
     showNotification(title, message) {
-<<<<<<< HEAD
         try {
-            // Создание уведомления
             const notification = document.createElement('div');
             notification.className = 'notification';
             notification.innerHTML = `
@@ -453,7 +450,6 @@ class SpaceRift {
             
             document.body.appendChild(notification);
             
-            // Автоматическое удаление через 3 секунды
             setTimeout(() => {
                 if (notification.parentElement) {
                     notification.remove();
