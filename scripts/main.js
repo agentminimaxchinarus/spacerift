@@ -42,6 +42,16 @@ class SpaceRift {
         console.log('🚀 SpaceRift инициализация...');
         
         try {
+            // Проверка загрузки THREE.js
+            if (typeof THREE === 'undefined') {
+                throw new Error('THREE.js не загружен');
+            }
+            
+            // Проверка доступности GameEngine
+            if (typeof GameEngine === 'undefined') {
+                throw new Error('GameEngine не загружен. Проверьте порядок загрузки скриптов.');
+            }
+            
             // Инициализация Telegram WebApp
             await this.initTelegram();
             
@@ -71,7 +81,15 @@ class SpaceRift {
             
         } catch (error) {
             console.error('❌ Ошибка инициализации SpaceRift:', error);
-            this.showError('Ошибка инициализации игры. Пожалуйста, перезагрузите страницу.');
+            
+            // Скрыть загрузочный экран
+            const loadingScreen = document.getElementById('loading-screen');
+            if (loadingScreen) {
+                loadingScreen.style.display = 'none';
+            }
+            
+            // Показать ошибку
+            this.showError('Ошибка инициализации игры: ' + error.message + '. Пожалуйста, перезагрузите страницу.');
         }
     }
     
@@ -415,23 +433,35 @@ class SpaceRift {
     }
     
     showNotification(title, message) {
-        // Создание уведомления
-        const notification = document.createElement('div');
-        notification.className = 'notification';
-        notification.innerHTML = `
-            <h3>${title}</h3>
-            <p>${message}</p>
-            <button class="btn" onclick="this.parentElement.remove()">OK</button>
-        `;
-        
-        document.body.appendChild(notification);
-        
-        // Автоматическое удаление через 3 секунды
-        setTimeout(() => {
-            if (notification.parentElement) {
+        try {
+            // Создание уведомления
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            notification.innerHTML = `
+                <h3>${title}</h3>
+                <p>${message}</p>
+                <button class="btn">OK</button>
+            `;
+            
+            // Правильная обработка события закрытия
+            const closeBtn = notification.querySelector('.btn');
+            closeBtn.addEventListener('click', () => {
                 notification.remove();
-            }
-        }, 3000);
+            });
+            
+            document.body.appendChild(notification);
+            
+            // Автоматическое удаление через 3 секунды
+            setTimeout(() => {
+                if (notification.parentElement) {
+                    notification.remove();
+                }
+            }, 3000);
+        } catch (error) {
+            console.error('Ошибка при создании уведомления:', error);
+            // Fallback - простой alert если не удалось создать уведомление
+            alert(`${title}: ${message}`);
+        }
     }
     
     hideLoadingScreen() {
