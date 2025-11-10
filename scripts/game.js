@@ -91,10 +91,10 @@ class GameEngine {
         const aspect = canvas.clientWidth / canvas.clientHeight;
         
         this.camera = new THREE.PerspectiveCamera(75, aspect, 0.1, 10000);
-        this.camera.position.set(0, 5, 30); // Камера выше и дальше
-        this.camera.lookAt(0, 0, 0);
+        this.camera.position.set(10, 5, 20); // Камера сбоку для лучшего обзора
+        this.camera.lookAt(5, 5, -10); // Смотрит на тестовый объект
         
-        console.log('✓ Камера создана (позиция: 0, 5, 30)');
+        console.log('✓ Камера создана (позиция: 10, 5, 20, цель: 5, 5, -10)');
     }
     
     initRenderer() {
@@ -116,8 +116,8 @@ class GameEngine {
     
     initLighting() {
         // Основной направленный свет
-        const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
-        directionalLight.position.set(5, 5, 5);
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 2);
+        directionalLight.position.set(10, 10, 10);
         directionalLight.castShadow = true;
         directionalLight.shadow.mapSize.width = 2048;
         directionalLight.shadow.mapSize.height = 2048;
@@ -126,11 +126,16 @@ class GameEngine {
         this.scene.add(directionalLight);
         
         // Дополнительное освещение
-        const light2 = new THREE.DirectionalLight(0x00d4ff, 0.3);
-        light2.position.set(-5, -5, 5);
+        const light2 = new THREE.DirectionalLight(0x00d4ff, 0.8);
+        light2.position.set(-10, -10, 10);
         this.scene.add(light2);
         
-        console.log('✓ Освещение настроено');
+        // Точечный свет для лучшего освещения объектов
+        const pointLight = new THREE.PointLight(0xffffff, 1, 100);
+        pointLight.position.set(0, 0, 10);
+        this.scene.add(pointLight);
+        
+        console.log('✓ Освещение настроено (3 источника света)');
     }
     
     initPlayer() {
@@ -261,10 +266,10 @@ class GameEngine {
         });
         
         const testObject = new THREE.Mesh(testGeometry, testMaterial);
-        testObject.position.set(0, 0, -20); // Впереди игрока
+        testObject.position.set(5, 5, -10); // Более видимая позиция
         
         this.scene.add(testObject);
-        console.log('✓ Тестовый объект создан (красный куб)');
+        console.log('✓ Тестовый объект создан (красный куб) в позиции:', testObject.position);
     }
     
     createAsteroid() {
@@ -685,6 +690,16 @@ class GameEngine {
     render() {
         if (this.isInitialized && this.renderer && this.scene && this.camera) {
             this.renderer.render(this.scene, this.camera);
+            
+            // Детальное логирование рендеринга
+            if (Math.random() < 0.01) { // 1% шанс логирования для избежания спама
+                console.log('🎨 Рендеринг выполнен:', {
+                    cameraPosition: this.camera.position.toArray(),
+                    cameraTarget: this.camera.getWorldDirection(new THREE.Vector3()),
+                    sceneObjects: this.scene.children.length,
+                    rendererSize: this.renderer.getSize(new THREE.Vector2())
+                });
+            }
         } else {
             console.warn('⚠️ Рендеринг пропущен:', {
                 isInitialized: this.isInitialized,
