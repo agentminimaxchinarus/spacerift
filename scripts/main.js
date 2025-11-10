@@ -81,6 +81,7 @@ class SpaceRift {
             
         } catch (error) {
             console.error('❌ Ошибка инициализации SpaceRift:', error);
+<<<<<<< HEAD
             
             // Скрыть загрузочный экран
             const loadingScreen = document.getElementById('loading-screen');
@@ -433,6 +434,36 @@ class SpaceRift {
     }
     
     showNotification(title, message) {
+<<<<<<< HEAD
+        try {
+            // Создание уведомления
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            notification.innerHTML = `
+                <h3>${title}</h3>
+                <p>${message}</p>
+                <button class="btn">OK</button>
+            `;
+            
+            // Правильная обработка события закрытия
+            const closeBtn = notification.querySelector('.btn');
+            closeBtn.addEventListener('click', () => {
+                notification.remove();
+            });
+            
+            document.body.appendChild(notification);
+            
+            // Автоматическое удаление через 3 секунды
+            setTimeout(() => {
+                if (notification.parentElement) {
+                    notification.remove();
+                }
+            }, 3000);
+        } catch (error) {
+            console.error('Ошибка при создании уведомления:', error);
+            // Fallback - простой alert если не удалось создать уведомление
+            alert(`${title}: ${message}`);
+        
         try {
             // Создание уведомления
             const notification = document.createElement('div');
