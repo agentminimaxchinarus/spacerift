@@ -35,7 +35,7 @@ class SpaceRift {
             shoot: false
         };
         
-        this.init();
+        // Инициализация отложена до DOMContentLoaded
     }
     
     async init() {
@@ -490,13 +490,12 @@ class SpaceRift {
     delay(ms) {
         return new Promise(resolve => setTimeout(resolve, ms));
     }
+    
+    // Публичный метод для запуска инициализации
+    async start() {
+        await this.init();
+    }
 }
-
-// Инициализация игры при загрузке страницы
-document.addEventListener('DOMContentLoaded', () => {
-    console.log('🌌 SpaceRift загружается...');
-    window.spaceRift = new SpaceRift();
-});
 
 // Экспорт для использования в других модулях
 if (typeof module !== 'undefined' && module.exports) {
